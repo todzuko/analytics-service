@@ -9,7 +9,7 @@
 
 С данными из .env.dist, запрос проходит по `http://localhost:8008/analitycs`
 Пример POST запроса:
-```json
+```
 curl -location -request POST 'http://localhost:8080/analitycs' \
 --header 'X-Tantum-UserAgent: DeviceID=G1752G75-7C56-4G49-BGFA-
 5ACBGC963471;DeviceType=iOS;OsVersion=15.5;AppVersion=4.3 (725)' \
