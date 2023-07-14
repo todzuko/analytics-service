@@ -19,7 +19,7 @@ func main() {
 	Router = chi.NewRouter()
 	Router.Use(middleware.Logger)
 	utils.Construct(Router)
-	workerpool.StartWorkerPool(20)
+	workerpool.StartWorkerPool()
 	database.Connect()
 
 	Router.Get("/analitycs", func(w http.ResponseWriter, r *http.Request) {
