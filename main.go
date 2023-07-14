@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/todzuko/analytics-service/database"
 	"github.com/todzuko/analytics-service/utils"
 	"github.com/todzuko/analytics-service/workerpool"
@@ -14,6 +17,7 @@ import (
 )
 
 var Router *chi.Mux
+var rps prometheus.Counter
 
 func main() {
 	Router = chi.NewRouter()
@@ -22,10 +26,19 @@ func main() {
 	workerpool.StartWorkerPool()
 	database.Connect()
 
+	rps = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "rps",
+		Help: "Requests count",
+	})
+
+	prometheus.MustRegister(rps)
+	Router.Handle("/metrics", promhttp.Handler())
+
 	Router.Get("/analitycs", func(w http.ResponseWriter, r *http.Request) {
 		utils.GetAnalytics(w)
 	})
 	Router.Post("/analitycs", func(w http.ResponseWriter, r *http.Request) {
+		rps.Inc()
 		utils.PostAnalytics(w, r)
 	})
 	Router.Get("/analitycs/{id}", func(w http.ResponseWriter, r *http.Request) {
