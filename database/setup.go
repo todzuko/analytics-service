@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/jackc/pgx/v5"
@@ -34,15 +35,14 @@ func Connect() {
 	var err error
 	DB, err = pgx.Connect(context.Background(), databaseUrl)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
+		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
 
 	err = CreateTableIfNotExists()
 	if err != nil {
 		return
 	}
-	fmt.Println("Successfully connected!")
+	log.Println("Connected to database")
 }
 
 func CreateTableIfNotExists() error {
@@ -51,8 +51,7 @@ func CreateTableIfNotExists() error {
 			id SERIAL PRIMARY KEY,
 			user_id VARCHAR(64),
 			created_at TIMESTAMP,
-			data JSONB,
-		    action VARCHAR(64)
+			data JSONB
 		)
 	`
 
@@ -61,6 +60,6 @@ func CreateTableIfNotExists() error {
 		return fmt.Errorf("error creating table %v", err)
 	}
 
-	fmt.Println("created table")
+	log.Println("created table")
 	return nil
 }
